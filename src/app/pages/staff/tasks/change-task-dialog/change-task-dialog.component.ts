@@ -1,15 +1,15 @@
-import {ConstantsService} from "../../../../services/constants.service";
-import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatDialog} from "@angular/material/dialog";
-import {HttpClient} from "@angular/common/http";
-import {DataTransferService} from "../../../../services/data-transfer.service";
-import {Task} from "../../../../component/task";
-import {DeleteTaskDialogComponent} from "../delete-task-dialog/delete-task-dialog.component";
-import {Staff} from "../../../../component/staff";
-import {Apartments} from "../../../../component/apartments";
-import {SelectService} from "../../../../services/select.service";
-import {TaskStatus} from "../../../../component/task-status.type";
+import {ConstantsService} from '../../../../services/constants.service';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {HttpClient} from '@angular/common/http';
+import {DataTransferService} from '../../../../services/data-transfer.service';
+import {Task} from '../../../../component/task';
+import {DeleteTaskDialogComponent} from '../delete-task-dialog/delete-task-dialog.component';
+import {Staff} from '../../../../component/staff';
+import {Apartments} from '../../../../component/apartments';
+import {SelectService} from '../../../../services/select.service';
+import {TaskStatus} from '../../../../component/task-status.type';
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -46,7 +46,6 @@ export class ChangeTaskDialogComponent implements OnInit {
               private http: HttpClient,
               dataTransfer: DataTransferService, public selectService: SelectService) {
     this.task = dataTransfer.getData();
-    this.getAllApartment();
     this.getAllAStaff();
     console.log(this.task);
   }
@@ -75,6 +74,7 @@ export class ChangeTaskDialogComponent implements OnInit {
       .subscribe(row => {
         console.log(row);
         this.task = row;
+        this.getAllApartment();
         this.fillForm(row);
       });
   }
