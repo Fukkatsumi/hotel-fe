@@ -9,20 +9,22 @@ import {HttpService} from '../../../http.service';
 import {ReactiveFormsModule} from '@angular/forms';
 import {UserManagerComponent} from './user-manager.component';
 import {UserTableComponent} from './components/user-table/user-table.component';
+import {AnimationsModule} from "../../../modules/animations/animations.module";
 
 @NgModule({
-  imports: [
-    MatPaginatorModule,
-    BrowserModule,
-    HttpClientModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatTableModule,
-    MatDialogModule,
-    MatInputModule,
-    ReactiveFormsModule
-  ],
+    imports: [
+        MatPaginatorModule,
+        BrowserModule,
+        HttpClientModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatTableModule,
+        MatDialogModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        AnimationsModule
+    ],
   exports: [
     MatButtonModule,
     MatDialogModule,

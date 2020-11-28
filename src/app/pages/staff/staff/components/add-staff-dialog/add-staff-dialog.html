@@ -1,60 +1,69 @@
-<form [formGroup]="addStaffFrom" (ngSubmit)="onSubmit()" class="change-apartment">
-<section class="change-staff">
-<h2 mat-dialog-title>Add Staff</h2>
-<mat-dialog-content class="mat-typography">
-  <mat-form-field>
-    <input required="required" matInput formControlName="login" class="full-width" placeholder="Login">
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input required="required" matInput formControlName="password" class="full-width" placeholder="Password">
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input required="required" matInput formControlName="firstname" class="full-width" placeholder="First name">
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input required="required" matInput formControlName="lastname" class="full-width" placeholder="Last name">
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input required="required" matInput formControlName="email" class="full-width" placeholder="Email">
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input required="required" matInput formControlName="phoneNumber" class="full-width" placeholder="Phone number">
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <mat-select formControlName="role" placeholder="Role" required>
-      <mat-option *ngFor="let roles of roles"
-                  (click)="onSelectRole(roles)"
-                  value="Client">
+<form [formGroup]="addStaffFrom" class="change-apartment">
+  <div *ngIf="isError" class="form-loader">
+    <app-loading-animation></app-loading-animation>
+  </div>
+  <div *ngIf="!isError">
+    <section class="change-staff">
+      <h2 mat-dialog-title>Add Staff</h2>
+      <mat-dialog-content class="mat-typography">
+        <mat-form-field>
+          <input required="required" matInput formControlName="login" class="full-width" placeholder="Login">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input required="required" matInput formControlName="password" class="full-width" placeholder="Password">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input required="required" matInput formControlName="firstname" class="full-width" placeholder="First name">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input required="required" matInput formControlName="lastname" class="full-width" placeholder="Last name">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input required="required" matInput formControlName="email" class="full-width" placeholder="Email">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input required="required" matInput formControlName="phoneNumber" class="full-width"
+                 placeholder="Phone number">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <mat-select formControlName="role" placeholder="Role" required>
+            <mat-option *ngFor="let roles of roles"
+                        (click)="onSelectRole(roles)"
+                        value="Client">
 
-        {{roles}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <br/>
-  <mat-label>is Active?  </mat-label>
-  <mat-checkbox class="full-width" formControlName="active" aria-placeholder="isActive" checked></mat-checkbox>
-  <br/>
-  <mat-form-field>
-    <mat-select formControlName="speciality" placeholder="Speciality" required>
-      <mat-option *ngFor="let speciality of specialities"
-                  (click)="onSelectSpec(speciality)"
-                  value="Cleaner">
+              {{roles}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br/>
+        <mat-label>is Active?</mat-label>
+        <mat-checkbox class="full-width" formControlName="active" aria-placeholder="isActive" checked></mat-checkbox>
+        <br/>
+        <mat-form-field>
+          <mat-select formControlName="speciality" placeholder="Speciality" required>
+            <mat-option *ngFor="let speciality of specialities"
+                        (click)="onSelectSpec(speciality)"
+                        value="Cleaner">
 
-        {{speciality}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <br/>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button type="submit" (click)="checkValid()" mat-dialog-close [disabled]="isSubmitDisabled()" mat-button>Add</button>
-</mat-dialog-actions>
-</section>
+              {{speciality}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br/>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit"
+                (click)="onSubmit()"
+                [disabled]="isSubmitDisabled()" mat-button>Add
+        </button>
+      </mat-dialog-actions>
+    </section>
+  </div>
 </form>

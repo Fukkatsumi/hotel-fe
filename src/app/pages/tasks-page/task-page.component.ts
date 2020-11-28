@@ -26,7 +26,7 @@ export class TaskPageComponent {
     this.auth.currentUserObservable
       .subscribe(
         (user: User) => {
-          this.logged = user === null;
+          this.logged = user !== null;
           if (this.logged) {
             this.username = user.firstname + ' ' + user.lastname;
             this.canAccess = user.userRole === 'Manager' || user.userRole === 'Administrator' || user.userRole === 'Worker';

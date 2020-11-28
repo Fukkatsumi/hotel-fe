@@ -2,13 +2,13 @@ import {MatDateFormats, NativeDateAdapter} from '@angular/material';
 
 export class AppDateAdapter extends NativeDateAdapter {
 
-  format(date: Date, displayFormat: Object): string {
+  format(date: Date, displayFormat: any): string {
     if (displayFormat === 'input') {
       let day: string = date.getDate().toString();
       day = +day < 10 ? '0' + day : day;
       let month: string = (date.getMonth() + 1).toString();
       month = +month < 10 ? '0' + month : month;
-      let year = date.getFullYear();
+      const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     }
     return date.toDateString();

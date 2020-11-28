@@ -11,6 +11,7 @@ import {SelectService} from "../../../../../services/select.service";
 import {DeleteApartmentsDialogComponent} from "../delete-apartment-dialog/delete-apartments-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ApartmentStatus} from "../../../../../component/apartment-status.type";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -25,6 +26,7 @@ const URL = new ConstantsService().BASE_URL;
 })
 
 export class ChangeApartmentsDialogComponent extends Unsubscribable implements OnInit {
+  isSubmit = false;
   profileForm: FormGroup;
   apartment = {} as Apartments;
   apartmentClass = {} as ApartmentsClass;
@@ -46,7 +48,8 @@ export class ChangeApartmentsDialogComponent extends Unsubscribable implements O
               private formBuilder: FormBuilder,
               private http: HttpClient,
               dataTransfer: DataTransferService,
-              public selectService: SelectService) {
+              public selectService: SelectService,
+              private snackBar: MatSnackBar) {
     super(selectService);
     this.apartment = dataTransfer.getData();
     this.getAllApartmentsClasses();
@@ -93,6 +96,7 @@ export class ChangeApartmentsDialogComponent extends Unsubscribable implements O
   }
 
   onSubmit() {
+    this.isSubmit = true;
     if (this.profileForm.valid) {
       this.setApartment();
       this.createApartment();
@@ -101,14 +105,20 @@ export class ChangeApartmentsDialogComponent extends Unsubscribable implements O
 
   createApartment() {
     this.http.put(URL + 'apartments/' + this.apartment.id, this.apartment).subscribe(
-    res => {
-    console.log(res);
-    this.apartment = (res as Apartments);
-    });
+      res => {
+        console.log(res);
+        this.apartment = (res as Apartments);
+        this.isSubmit = false;
+        this.snackBar.open('Apartment has been changed!', 'Ok', {duration: 5000});
+      }, error => {
+        this.isSubmit = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok', {duration: 5000});
+      });
   }
 
   deleteApartment() {
-    const dialogRef = this.dialog.open(DeleteApartmentsDialogComponent);
+    const dialogRef = this.dialog.open(DeleteApartmentsDialogComponent,
+      {disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

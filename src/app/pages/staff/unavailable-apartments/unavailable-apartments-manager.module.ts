@@ -20,35 +20,17 @@ import {ChangeUnavailableApartmentDialogComponent} from './components/change-una
 import {AddUnavailableApartmentDialogComponent} from './components/add-unavailable-apartment-dialog/add-unavailable-apartment-dialog.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import {DateAdapter, MAT_DATE_FORMATS, MatDateFormats, NativeDateAdapter} from "@angular/material/core";
-
-export class AppDateAdapter extends NativeDateAdapter {
-  format(date: Date, displayFormat: any): string {
-    if (displayFormat === 'input') {
-      let day: string = date.getDate().toString();
-      day = +day < 10 ? '0' + day : day;
-      let month: string = (date.getMonth() + 1).toString();
-      month = +month < 10 ? '0' + month : month;
-      const year = date.getFullYear();
-      return `${year}-${month}-${day}`;
-    }
-    return date.toDateString();
-  }
-}
-
-export const APP_DATE_FORMATS: MatDateFormats = {
-  parse: {
-    dateInput: {month: 'short', year: 'numeric', day: 'numeric'},
-  },
-  display: {
-    dateInput: 'input',
-    monthYearLabel: {year: 'numeric', month: 'numeric'},
-    dateA11yLabel: {
-      year: 'numeric', month: 'long', day: 'numeric'
-    },
-    monthYearA11yLabel: {year: 'numeric', month: 'long'},
-  }
-};
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MatDateFormats,
+  MatNativeDateModule,
+  NativeDateAdapter
+} from '@angular/material/core';
+import {APP_DATE_FORMATS, AppDateAdapter} from '../../../utils/AppDateAdapter';
+import {AnimationsModule} from "../../../modules/animations/animations.module";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   imports: [
@@ -63,7 +45,10 @@ export const APP_DATE_FORMATS: MatDateFormats = {
     MatInputModule,
     ReactiveFormsModule,
     MatExpansionModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    AnimationsModule,
+    MatSnackBarModule,
+    MatSidenavModule
   ],
   exports: [
     MatButtonModule,
@@ -86,7 +71,7 @@ export const APP_DATE_FORMATS: MatDateFormats = {
   entryComponents: [
     DeleteUnavailableApartmentDialogComponent,
     ChangeUnavailableApartmentDialogComponent,
-    AddUnavailableApartmentDialogComponent
+   AddUnavailableApartmentDialogComponent
   ],
 })
 export class UnavailableApartmentsManagerModule {

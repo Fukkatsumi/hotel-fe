@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {ConstantsService} from '../../../../../services/constants.service';
 import {SelectService} from "../../../../../services/select.service";
 import {take} from "rxjs/operators";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialogRef} from "@angular/material/dialog";
 
 
 /**
@@ -18,7 +20,9 @@ const URL = new ConstantsService().BASE_URL;
 })
 export class DeleteServicesDialogComponent {
 
-  constructor(private http: HttpClient, private selectService: SelectService) {
+  constructor(private http: HttpClient, private selectService: SelectService,
+              private snackBar: MatSnackBar,
+              private matDialogRef: MatDialogRef<DeleteServicesDialogComponent>) {
   }
 
   deleteService() {
@@ -26,7 +30,15 @@ export class DeleteServicesDialogComponent {
       .pipe(take(1))
       .subscribe(id => {
         this.http.delete(URL + 'bookingAddServices/' + id.id)
-          .subscribe(res => this.selectService.announceSelect(null));
+          .subscribe(res =>  {
+            this.selectService.announceSelect(null);
+            this.selectService.announceDelete(1);
+            this.matDialogRef.close();
+            this.snackBar.open('Delete succeeded!', 'Ok', {duration: 6000});
+          }, error => {
+            this.matDialogRef.close();
+            this.snackBar.open('Delete succeeded!', 'Ok', {duration: 6000});
+          });
       });
   }
 }

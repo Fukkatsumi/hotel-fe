@@ -8,6 +8,7 @@ import {DataTransferService} from '../../../../../services/data-transfer.service
 import {FormControl} from '@angular/forms';
 import {takeUntil} from 'rxjs/operators';
 import {SelectService} from '../../../../../services/select.service';
+import {Subscription} from "rxjs";
 
 const URL = new ConstantsService().BASE_URL;
 
@@ -20,6 +21,9 @@ const URL = new ConstantsService().BASE_URL;
 export class StaffTableComponent extends Unsubscribable implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  subscription: Subscription;
+  subscriptionDelete: Subscription;
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
 
@@ -56,6 +60,17 @@ export class StaffTableComponent extends Unsubscribable implements OnInit, After
   }
 
   ngOnInit() {
+    this.subscription = this.selectService.addAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllStaff();
+          this.ngAfterViewInit();
+          this.selectService.announceAdd(null);
+        }
+      }, error => {
+        console.log(error);
+      });
     this.firstNameFilter.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(firstname => {
         this.filterValues.firstname = firstname;
@@ -104,6 +119,7 @@ export class StaffTableComponent extends Unsubscribable implements OnInit, After
     this.http.get(URL + 'staff').subscribe(res => {
       console.log(res);
       this.staffList.data = (res as Staff[]);
+      this.isEmptyTable = true;
     });
   }
 
@@ -111,10 +127,10 @@ export class StaffTableComponent extends Unsubscribable implements OnInit, After
     // tslint:disable-next-line:only-arrow-functions
     const filterFunction = function (data, filter): boolean {
       const searchTerms = JSON.parse(filter);
-      return data.user.lastname.indexOf(searchTerms.lastname) !== -1
-        && data.user.email.indexOf(searchTerms.email) !== -1
-        && data.user.firstname.indexOf(searchTerms.firstname) !== -1
-        && data.speciality.indexOf(searchTerms.speciality) !== -1
+      return data.user.lastname.toString().toLowerCase().indexOf(searchTerms.lastname) !== -1
+        && data.user.email.toString().toLowerCase().indexOf(searchTerms.email) !== -1
+        && data.user.firstname.toString().toLowerCase().indexOf(searchTerms.firstname) !== -1
+        && data.speciality.toString().toLowerCase().indexOf(searchTerms.speciality) !== -1
         && data.active.toString().toLowerCase().indexOf(searchTerms.active) !== -1;
     };
     return filterFunction;

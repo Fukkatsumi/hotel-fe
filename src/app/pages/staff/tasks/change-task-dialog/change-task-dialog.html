@@ -1,113 +1,118 @@
-<div class="change-component">
-  <mat-accordion>
-    <mat-expansion-panel [expanded]="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Change
-        </mat-panel-title>
-        <mat-panel-description>
-          Apartment
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <form [formGroup]="changeForm" (ngSubmit)="onSubmit()" class="change-apartment">
-        <mat-form-field>
-          <input
-            type='text' mask="0000-M0-d0 hh:m0:s0"
-            [showMaskTyped]="true"
-            [dropSpecialCharacters]="false"
-            matInput required="required" formControlName="start" class="full-width" placeholder="Start date">
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <input
-            type='text' mask="0000-M0-d0 hh:m0:s0"
-            [showMaskTyped]="true"
-            [dropSpecialCharacters]="false"
-            matInput required="required" formControlName="end" class="full-width" placeholder="End date">
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <input
-            type='text' mask="0000-M0-d0 hh:m0:s0"
-            [showMaskTyped]="true"
-            [dropSpecialCharacters]="false"
-            matInput formControlName="accept" class="full-width" placeholder="Accept date">
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <input
-            type='text' mask="0000-M0-d0 hh:m0:s0"
-            [showMaskTyped]="true"
-            [dropSpecialCharacters]="false"
-            matInput formControlName="complete" class="full-width" placeholder="Complete date">
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <input matInput required="required" formControlName="description" class="full-width" placeholder="Description">
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <mat-label>Task status</mat-label>
-          <mat-select placeholder="Status" formControlName="taskStatus">
-            <mat-option *ngFor="let statusTask of taskStatus"
-                        (click)="onSelectTaskStatus(statusTask)"
-                        value="{{statusTask}}">
-
-              {{statusTask}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <mat-label>
-            Apartment </mat-label>
-          <mat-select required="required" placeholder="Apartment" formControlName="apartmentsRoomNumber">
-            <mat-option *ngFor="let apartments of apartmentList"
-                        (click)="onSelectApartment(apartments)"
-                        value="{{apartments?.roomNumber}}">
-
-              {{apartments?.roomNumber}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <mat-label>
-            Creator </mat-label>
-          <mat-select required="required" placeholder="Creator" formControlName="creatorEmail">
-            <mat-option *ngFor="let staff of staffList"
-                        (click)="onSelectCreator(staff)"
-                        value="{{staff?.user.email}}">
-
-              {{staff?.user.email}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <mat-label>
-            Executor </mat-label>
-          <mat-select required="required" placeholder="Executor" formControlName="executorEmail">
-            <mat-option *ngFor="let staff of staffList"
-                        (click)="onSelectExecutor(staff)"
-                        value="{{staff?.user.email}}">
-
-              {{staff?.user.email}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br/>
-        <mat-dialog-actions align="end">
-          <button style="background-color: tomato" class="mat-button" mat-raised-button (click)="deleteDialog()">Delete</button>
-          <button mat-button [mat-dialog-close]="true">
-            Cancel
-          </button>
-          <button type="submit" (click)="checkValid()" [disabled]="isSubmitDisabled()" mat-button>
+<div *ngIf="staffList != null && !isSubmit">
+  <div class="change-component">
+    <mat-accordion>
+      <mat-expansion-panel [disabled]="!staffList" [expanded]="staffList">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
             Change
-          </button>
-        </mat-dialog-actions>
-      </form>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
+          </mat-panel-title>
+          <mat-panel-description>
+            Apartment
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <form [formGroup]="changeForm" class="change-apartment">
+          <mat-form-field>
+            <input
+              type='text' mask="0000-M0-d0 hh:m0:s0"
+              [showMaskTyped]="true"
+              [dropSpecialCharacters]="false"
+              matInput required="required" formControlName="start" class="full-width" placeholder="Start date">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input
+              type='text' mask="0000-M0-d0 hh:m0:s0"
+              [showMaskTyped]="true"
+              [dropSpecialCharacters]="false"
+              matInput required="required" formControlName="end" class="full-width" placeholder="End date">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input
+              type='text' mask="0000-M0-d0 hh:m0:s0"
+              [showMaskTyped]="true"
+              [dropSpecialCharacters]="false"
+              matInput formControlName="accept" class="full-width" placeholder="Accept date">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input
+              type='text' mask="0000-M0-d0 hh:m0:s0"
+              [showMaskTyped]="true"
+              [dropSpecialCharacters]="false"
+              matInput formControlName="complete" class="full-width" placeholder="Complete date">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input matInput required="required" formControlName="description" class="full-width"
+                   placeholder="Description">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>Task status</mat-label>
+            <mat-select placeholder="Status" formControlName="taskStatus">
+              <mat-option *ngFor="let statusTask of taskStatus"
+                          (click)="onSelectTaskStatus(statusTask)"
+                          value="{{statusTask}}">
 
+                {{statusTask}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>
+              Apartment
+            </mat-label>
+            <mat-select required="required" placeholder="Apartment" formControlName="apartmentsRoomNumber">
+              <mat-option *ngFor="let apartments of apartmentList"
+                          (click)="onSelectApartment(apartments)"
+                          [value]="apartments?.roomNumber">
+
+                {{apartments?.roomNumber}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>
+              Creator
+            </mat-label>
+            <mat-select required="required" placeholder="Creator" formControlName="creatorEmail">
+              <mat-option *ngFor="let staff of staffList"
+                          (click)="onSelectCreator(staff)"
+                          value="{{staff?.user.email}}">
+
+                {{staff?.user.email}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>
+              Executor
+            </mat-label>
+            <mat-select required="required" placeholder="Executor" formControlName="executorEmail">
+              <mat-option *ngFor="let staff of staffList"
+                          (click)="onSelectExecutor(staff)"
+                          value="{{staff?.user.email}}">
+
+                {{staff?.user.email}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-dialog-actions align="end">
+
+            <button type="submit" (click)="onSubmit()" [disabled]="isSubmitDisabled()" mat-button>
+              Change
+            </button>
+          </mat-dialog-actions>
+        </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+<div *ngIf="staffList == null || isSubmit" class="form-loader">
+  <app-loading-animation></app-loading-animation>
+</div>

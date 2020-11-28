@@ -25,18 +25,20 @@ const URL = new ConstantsService().BASE_URL;
 export class ApartmentsTableComponent extends Unsubscribable implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   subscription: Subscription;
+  subscriptionDelete: Subscription;
+
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
   apartmentsList = new MatTableDataSource<Apartments>();
   selectedApartments: Apartments;
-  displayedColumns = ['roomNumber', 'photo', 'description', 'status', 'apartmentClass.id',
+  displayedColumns = ['roomNumber', 'photo', 'description', 'status',
     'apartmentClass.nameClass', 'apartmentClass.numberOfRooms', 'apartmentClass.numberOfCouchette'];
 
   roomNumberFilter = new FormControl('');
   photoFilter = new FormControl('');
   descriptionFilter = new FormControl('');
   statusFilter = new FormControl('');
-  classIdFilter = new FormControl('');
   nameClassFilter = new FormControl('');
   numberOfRoomsFilter = new FormControl('');
   numberOfCouchetteFilter = new FormControl('');
@@ -46,7 +48,6 @@ export class ApartmentsTableComponent extends Unsubscribable implements OnInit, 
     photo: '',
     description: '',
     status: '',
-    classId: '',
     nameClass: '',
     numberOfRooms: '',
     numberOfCouchette: ''
@@ -73,7 +74,28 @@ export class ApartmentsTableComponent extends Unsubscribable implements OnInit, 
     console.log(this.selectedApartments);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.subscription = this.selectService.addAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartments();
+          this.ngAfterViewInit();
+          this.selectService.announceAdd(null);
+        }
+      }, error => {
+        console.log(error);
+      });
+    this.subscriptionDelete = this.selectService.deleteAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartments();
+          this.ngAfterViewInit();
+          this.selectService.announceDelete(null);
+        }
+      });
+
     this.roomNumberFilter.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(
         roomNumber => {
@@ -99,13 +121,6 @@ export class ApartmentsTableComponent extends Unsubscribable implements OnInit, 
       .subscribe(
         status => {
           this.filterValues.status = status;
-          this.apartmentsList.filter = JSON.stringify(this.filterValues);
-        }
-      );
-    this.classIdFilter.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe(
-        classId => {
-          this.filterValues.classId = classId;
           this.apartmentsList.filter = JSON.stringify(this.filterValues);
         }
       );
@@ -140,6 +155,7 @@ export class ApartmentsTableComponent extends Unsubscribable implements OnInit, 
     this.http.get(URL + 'apartments').subscribe(res => {
       console.log(res);
       this.apartmentsList.data = (res as Apartments[]);
+      this.isEmptyTable = true;
     });
   }
 
@@ -150,11 +166,10 @@ export class ApartmentsTableComponent extends Unsubscribable implements OnInit, 
       return data.roomNumber.toString().toLowerCase().indexOf(searchTerms.roomNumber) !== -1
         && data.photo.toLowerCase().indexOf(searchTerms.photo) !== -1
         && data.description.indexOf(searchTerms.description) !== -1
-        && data.status.indexOf(searchTerms.status) !== -1
+        && data.status.toString().toLowerCase().indexOf(searchTerms.status) !== -1
         && data.apartmentClass.numberOfCouchette.toString().toLowerCase().indexOf(searchTerms.numberOfCouchette) !== -1
         && data.apartmentClass.numberOfRooms.toString().toLowerCase().indexOf(searchTerms.numberOfRooms) !== -1
-        && data.apartmentClass.nameClass.indexOf(searchTerms.nameClass) !== -1
-        && data.apartmentClass.id.toString().toLowerCase().indexOf(searchTerms.classId) !== -1;
+        && data.apartmentClass.nameClass.toString().toLowerCase().indexOf(searchTerms.nameClass) !== -1;
     };
     return filterFunction;
   }

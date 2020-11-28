@@ -5,11 +5,11 @@ import {MatDialog} from "@angular/material/dialog";
 import {HttpClient} from "@angular/common/http";
 import {DataTransferService} from "../../../../services/data-transfer.service";
 import {Task} from "../../../../component/task";
-import {DeleteTaskDialogComponent} from "../delete-task-dialog/delete-task-dialog.component";
 import {Staff} from "../../../../component/staff";
 import {Apartments} from "../../../../component/apartments";
 import {SelectService} from "../../../../services/select.service";
 import {TaskStatus} from "../../../../component/task-status.type";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -25,6 +25,7 @@ const URL = new ConstantsService().BASE_URL;
 })
 export class ChangeTaskDialogComponent implements OnInit {
 
+  isSubmit = false;
   changeForm: FormGroup;
   task = {} as Task;
   taskStatus = [
@@ -44,7 +45,8 @@ export class ChangeTaskDialogComponent implements OnInit {
 
   constructor(public dialog: MatDialog, private formBuilder: FormBuilder,
               private http: HttpClient,
-              dataTransfer: DataTransferService, public selectService: SelectService) {
+              dataTransfer: DataTransferService, public selectService: SelectService,
+              private snackBar: MatSnackBar) {
     this.task = dataTransfer.getData();
     this.getAllApartment();
     this.getAllAStaff();
@@ -74,6 +76,7 @@ export class ChangeTaskDialogComponent implements OnInit {
     this.selectService.selectAnnounced$
       .subscribe(row => {
         console.log(row);
+        this.getAllApartment();
         this.task = row;
         this.fillForm(row);
       });
@@ -109,6 +112,7 @@ export class ChangeTaskDialogComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isSubmit = true;
     if (this.changeForm.valid) {
       this.setTask();
       this.changeTask();
@@ -120,6 +124,11 @@ export class ChangeTaskDialogComponent implements OnInit {
       res => {
         console.log(res);
         this.task = (res as Task);
+        this.isSubmit = false;
+        this.snackBar.open('Task has been changed!', 'Ok', { duration: 5000});
+      }, error => {
+        this.isSubmit = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok', { duration: 5000});
       });
   }
 
@@ -164,13 +173,5 @@ export class ChangeTaskDialogComponent implements OnInit {
 
   onSelectTaskStatus(status: any): void {
     this.selectedStatus = status;
-  }
-
-  deleteDialog() {
-    const dialogRef = this.dialog.open(DeleteTaskDialogComponent);
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
 }

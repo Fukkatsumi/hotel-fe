@@ -8,6 +8,8 @@ import {ConstantsService} from '../../../../../services/constants.service';
 import {FormControl} from '@angular/forms';
 import {DataTransferService} from '../../../../../services/data-transfer.service';
 import {SelectService} from '../../../../../services/select.service';
+import {Subscription} from "rxjs";
+import {Task} from '../../../../../component/task';
 
 
 const URL = new ConstantsService().BASE_URL;
@@ -25,6 +27,7 @@ export class BookingTableComponent extends Unsubscribable implements OnInit, Aft
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
   bookingList = new MatTableDataSource<Booking>();
@@ -42,6 +45,8 @@ export class BookingTableComponent extends Unsubscribable implements OnInit, Aft
     'roomNumber'
   ];
 
+  subscription: Subscription;
+  subscriptionDelete: Subscription;
   dataSource = this.bookingList;
   startDateFilter = new FormControl('');
   endDateFilter = new FormControl('');
@@ -92,6 +97,27 @@ export class BookingTableComponent extends Unsubscribable implements OnInit, Aft
 
 
   ngOnInit() {
+    this.subscription = this.selectService.addAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllBookings();
+          this.ngAfterViewInit();
+          this.selectService.announceAdd(null);
+        }
+      }, error => {
+        console.log(error);
+      });
+    this.subscriptionDelete = this.selectService.deleteAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllBookings();
+          this.ngAfterViewInit();
+          this.selectService.announceDelete(null);
+        }
+      });
+
     this.startDateFilter.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(
         startDate => {
@@ -170,10 +196,19 @@ export class BookingTableComponent extends Unsubscribable implements OnInit, Aft
   }
 
   public getAllBookings = () => {
-    this.http.get(URL + 'bookings/').subscribe(res => {
-      console.log(res);
-      this.dataSource.data = (res as Booking[]);
+    this.http.get(URL + 'bookings/').subscribe((res: Booking[]) => {
+      this.dataSource.data = res;
+      this.isEmptyTable = true;
     });
+  }
+
+  applyFilter(event: Event, key: string) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    // tslint:disable-next-line
+    this.dataSource.filterPredicate = function(data, filter) {
+      return data[key].toString().toLowerCase().indexOf(filterValue.toLowerCase()) !== -1;
+    };
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   createFilter(): (data: any, filter: string) => boolean {

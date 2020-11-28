@@ -1,4 +1,3 @@
-<!--<div class="img-div"><img src="https://cs8.pikabu.ru/images/previews_comm/2016-03_6/14592464771100688822.png" alt="Готов вкалывать"></div>-->
 
 <div *ngIf="logged" class="logged">
   <p>You are logged in as <span style="color: #023EBC">{{username}}</span></p>
@@ -17,6 +16,7 @@
 <mat-tab-group *ngIf="canAccess && workerTasks != null" mat-align-tabs="center">
   <mat-tab label="Opened">
     <div class="task-container opened">
+      <img src="../../../assets/img/meme/0ed9e2cd36d1268a03fda0f83d32f68a.jpg"/>
       <div *ngFor="let t of workerTasks">
         <div *ngIf="t.status == 'OPEN'" class="task">
           <p>Created: <span>{{t.start}}</span></p>
@@ -32,6 +32,7 @@
   </mat-tab>
   <mat-tab label="Started">
     <div class="task-container started">
+      <img src="https://cs8.pikabu.ru/images/previews_comm/2016-03_6/14592464771100688822.png" alt="Готов вкалывать">
       <div *ngFor="let t of workerTasks">
         <div *ngIf="t.status == 'Started'" class="task">
           <p>Created: <span>{{t.start}}</span></p>
@@ -48,6 +49,7 @@
   </mat-tab>
   <mat-tab label="Complete">
     <div class="task-container complete">
+      <img src="../../../assets/img/meme/482ef9914092da367914a188a6e04c65.jpg"/>
       <div *ngFor="let t of workerTasks">
         <div *ngIf="t.status == 'Complete'" class="task">
           <p>Created: <span>{{t.start}}</span></p>
@@ -63,6 +65,7 @@
   </mat-tab>
   <mat-tab label="Failed">
     <div class="task-container failed">
+      <img src="../../../assets/img/meme/5f4a9fc5f614bc23cbd1abbfc817baa5.jpg"/>
       <div *ngFor="let t of workerTasks">
         <div *ngIf="t.status == 'Failed'" class="task">
           <p>Created: <span>{{t.start}}</span></p>
@@ -78,6 +81,7 @@
   </mat-tab>
   <mat-tab label="Canceled">
     <div class="task-container canceled">
+      <img src="../../../assets/img/meme/16ae280f30f62db671a9338448e5b69e.jpg"/>
       <div *ngFor="let t of workerTasks">
         <div *ngIf="t.status == 'Canceled'" class="task">
           <p>Created: <span>{{t.start}}</span></p>

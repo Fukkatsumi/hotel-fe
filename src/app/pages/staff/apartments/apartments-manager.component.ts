@@ -18,18 +18,24 @@ import {Unsubscribable} from "../../../component/Unsubscribable";
 export class ApartmentsManagerComponent extends Unsubscribable implements OnInit {
   id$: Observable<string>;
   subscription: Subscription;
+  isOpenSidenav = 'false';
 
   constructor(public dialog: MatDialog, public selectService: SelectService) {
     super(selectService);
     this.subscription = this.selectService.selectAnnounced$
-      .subscribe(id => this.id$ = this.selectService.selectAnnounced$);
+      .subscribe(id => {
+        if (this.id$ != null) {
+          this.isOpenSidenav = 'opened';
+        }
+        this.id$ = this.selectService.selectAnnounced$;
+      });
   }
 
   ngOnInit(): void {
   }
 
   addApartmentDialog() {
-    const dialogRef = this.dialog.open(AddApartmentsDialogComponent);
+    const dialogRef = this.dialog.open(AddApartmentsDialogComponent,{disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

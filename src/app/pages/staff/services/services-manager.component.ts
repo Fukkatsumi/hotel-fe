@@ -17,15 +17,22 @@ import {Observable, Subscription} from "rxjs";
 export class ServicesManagerComponent extends Unsubscribable {
   row$: Observable<any>;
   subscription: Subscription;
+  isOpenSidenav = 'false';
 
   constructor(public dialog: MatDialog, public selectService: SelectService) {
     super(selectService);
     this.subscription = this.selectService.selectAnnounced$
-      .subscribe(id => this.row$ = this.selectService.selectAnnounced$);
+      .subscribe(id => {
+        if (this.row$ != null) {
+          this.isOpenSidenav = 'opened';
+        }
+        this.row$ = this.selectService.selectAnnounced$;
+      });
   }
 
   addDialog() {
-    const dialogRef = this.dialog.open(AddServicesDialogComponent);
+    const dialogRef = this.dialog.open(AddServicesDialogComponent,
+      {disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

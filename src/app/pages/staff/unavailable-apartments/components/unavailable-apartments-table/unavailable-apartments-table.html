@@ -1,7 +1,10 @@
 <div class="table-component">
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-
+  <div *ngIf="!isEmptyTable" style="margin-left: 400px ">
+    <app-loading-animation></app-loading-animation>
+  </div>
+  <div *ngIf="isEmptyTable">
   <table mat-table [dataSource]="unavailableApartmentList">
 
     <ng-container matColumnDef="id">
@@ -63,4 +66,5 @@
         (click)="selectRow(row)"
         [ngClass]="{'highlightRow': selectedRow == row.id}"></tr>
   </table>
+  </div>
 </div>

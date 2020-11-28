@@ -6,8 +6,9 @@ import {MatPaginator, MatTableDataSource} from '@angular/material';
 import {FormControl} from '@angular/forms';
 import {ConstantsService} from '../../../../../services/constants.service';
 import {ApartmentsClass} from '../../../../../component/apartments-class';
-import {DataTransferService} from "../../../../../services/data-transfer.service";
-import {SelectService} from "../../../../../services/select.service";
+import {DataTransferService} from '../../../../../services/data-transfer.service';
+import {SelectService} from '../../../../../services/select.service';
+import {Subscription} from "rxjs";
 
 const URL = new ConstantsService().BASE_URL;
 
@@ -23,6 +24,9 @@ const URL = new ConstantsService().BASE_URL;
 export class ApartmentsClassesTableComponent extends Unsubscribable implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  subscription: Subscription;
+  subscriptionDelete: Subscription;
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
   apartmentsClassesList = new MatTableDataSource<ApartmentsClass>();
@@ -55,6 +59,27 @@ export class ApartmentsClassesTableComponent extends Unsubscribable implements O
 
 
   ngOnInit() {
+    this.subscription = this.selectService.addAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartmentsClasses();
+          this.ngAfterViewInit();
+          this.selectService.announceAdd(null);
+        }
+      }, error => {
+        console.log(error);
+      });
+    this.subscriptionDelete = this.selectService.deleteAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartmentsClasses();
+          this.ngAfterViewInit();
+          this.selectService.announceDelete(null);
+        }
+      });
+
     this.nameClassFilter.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(
         nameClass => {
@@ -86,6 +111,7 @@ export class ApartmentsClassesTableComponent extends Unsubscribable implements O
     this.http.get(URL + 'apartmentsClasses/').subscribe(res => {
       console.log(res);
       this.apartmentsClassesList.data = (res as ApartmentsClass[]);
+      this.isEmptyTable = true;
     });
   }
 
@@ -93,7 +119,7 @@ export class ApartmentsClassesTableComponent extends Unsubscribable implements O
     // tslint:disable-next-line:only-arrow-functions
     let filterFunction = function(data, filter): boolean {
       let searchTerms = JSON.parse(filter);
-      return data.nameClass.indexOf(searchTerms.nameClass) !== -1
+      return data.nameClass.toString().toLowerCase().indexOf(searchTerms.nameClass) !== -1
         && data.numberOfRooms.toString().toLowerCase().indexOf(searchTerms.numberOfRooms) !== -1
         && data.numberOfCouchette.toString().toLowerCase().indexOf(searchTerms.numberOfCouchette) !== -1;
     };

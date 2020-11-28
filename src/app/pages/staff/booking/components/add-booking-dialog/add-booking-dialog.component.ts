@@ -11,6 +11,8 @@ import {BookingStatus} from "../../../../../component/booking-status.type";
 import {SelectService} from "../../../../../services/select.service";
 import {Unsubscribable} from "../../../../../component/Unsubscribable";
 import {DatePipe} from "@angular/common";
+import {MatDialogRef} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -23,12 +25,14 @@ const URL = new ConstantsService().BASE_URL;
   styleUrls: ['../../../styles/change-dialog.css'],
   templateUrl: './add-booking-dialog.html',
 })
-export class AddBookingDialogComponent extends Unsubscribable implements OnInit {
+export class AddBookingDialogComponent implements OnInit {
   isChangedStartPicker = false;
   isChangedEndPicker = false;
   addForm: FormGroup;
   booking = {} as Booking;
   subscription: Subscription;
+  isError = false;
+  isApartments = true;
 
   userList: User[];
   apartmentsClassesList: ApartmentsClass[];
@@ -41,14 +45,16 @@ export class AddBookingDialogComponent extends Unsubscribable implements OnInit 
     'Created',
     'CheckedIn',
     'Closed',
-    'Canceled'
+    'Canceled',
+    'Confirmed'
   ];
   private selectedStatus: BookingStatus;
 
   // tslint:disable-next-line:max-line-length
   constructor(private formBuilder: FormBuilder, private datePipe: DatePipe,
-              private http: HttpClient, public selectService: SelectService) {
-    super(selectService);
+              private http: HttpClient, public selectService: SelectService,
+              private matDialogRef: MatDialogRef<AddBookingDialogComponent>,
+              private snackBar: MatSnackBar) {
     this.getAllApartmentsClasses();
     this.getAllUsers();
   }
@@ -84,6 +90,7 @@ export class AddBookingDialogComponent extends Unsubscribable implements OnInit 
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.addForm.valid) {
       this.setBooking();
     }
@@ -122,6 +129,7 @@ export class AddBookingDialogComponent extends Unsubscribable implements OnInit 
     const startDateTemp = this.datePipe.transform(this.addForm.value.startDate, 'yyyy-MM-dd');
     const endDateTemp = this.datePipe.transform(this.addForm.value.endDate, 'yyyy-MM-dd');
     console.log(this.addForm.value.startDate.toString());
+    this.isApartments = false;
     this.getFreeApartments(startDateTemp.toString(), endDateTemp.toString(), apartmentsClass.id.toString());
 
   }
@@ -161,6 +169,7 @@ export class AddBookingDialogComponent extends Unsubscribable implements OnInit 
       '&apartmentClass=' + classId).subscribe(res => {
       console.log(res);
       this.apartmentsList = (res as Apartments[]);
+      this.isApartments = true;
     });
   }
 
@@ -169,6 +178,13 @@ export class AddBookingDialogComponent extends Unsubscribable implements OnInit 
       res => {
         console.log(res);
         this.booking = (res as Booking);
+        this.isError = false;
+        this.matDialogRef.close();
+        this.selectService.announceAdd(res);
+        this.snackBar.open('Booking has been created!', 'Ok', {duration: 6000});
+      }, error => {
+        this.isError = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok', {duration: 6000});
       });
   }
 

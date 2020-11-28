@@ -9,6 +9,7 @@ import {Unsubscribable} from "../../../../../component/Unsubscribable";
 import {Speciality} from "../../../../../component/speciality.type";
 import {Subscription} from "rxjs";
 import {SelectService} from "../../../../../services/select.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -26,6 +27,7 @@ export class ChangeStaffDialogComponent extends Unsubscribable implements OnInit
   staff = {} as Staff;
   user = {} as User;
   subscription: Subscription;
+  isError = false;
 
   specialities = [
     'Cleaner',
@@ -37,7 +39,8 @@ export class ChangeStaffDialogComponent extends Unsubscribable implements OnInit
 
   constructor(private formBuilder: FormBuilder, private  http: HttpClient,
               dataTransfer: DataTransferService,
-              public selectService: SelectService) {
+              public selectService: SelectService,
+              private snackBar: MatSnackBar) {
     super(selectService);
     this.staff = dataTransfer.getData();
     this.selectedSpeciality = this.staff.speciality;
@@ -55,6 +58,8 @@ export class ChangeStaffDialogComponent extends Unsubscribable implements OnInit
     this.subscription = this.selectService.selectAnnounced$
       .subscribe(row => {
         console.log(row);
+        this.selectedSpeciality = this.staff.speciality;
+        this.staff.active = this.changeStaffFrom.value.active;
         this.staff = row;
         this.fillForm(row);
       });
@@ -86,6 +91,7 @@ export class ChangeStaffDialogComponent extends Unsubscribable implements OnInit
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.changeStaffFrom.valid) {
       this.setStaff();
       this.createStaff();
@@ -96,14 +102,18 @@ export class ChangeStaffDialogComponent extends Unsubscribable implements OnInit
     this.http.put(URL + 'staff/' + this.staff.id, this.staff).subscribe(
       res => {
         console.log(res);
-        this.staff = (res as Staff);
+        this.isError = false;
+        this.snackBar.open('Staff has been changed!', 'Ok', {duration: 7000});
+      }, error => {
+        this.isError = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok', {duration: 7000});
       });
   }
 
   setStaff() {
-    this.staff.active = this.changeStaffFrom.value.active;
+    this.staff.active = (this.changeStaffFrom.value.active as boolean);
     this.staff.speciality = this.selectedSpeciality;
-    console.log(this.staff);
+    console.log('Staff',  this.staff);
   }
 }
 

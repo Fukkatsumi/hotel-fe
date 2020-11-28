@@ -8,6 +8,8 @@ import {Subscription} from 'rxjs';
 import {SelectService} from '../../../../../services/select.service';
 import {Unsubscribable} from '../../../../../component/Unsubscribable';
 import {DatePipe} from "@angular/common";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialogRef} from "@angular/material/dialog";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -20,10 +22,10 @@ const URL = new ConstantsService().BASE_URL;
   styleUrls: ['../../../styles/change-dialog.css'],
   templateUrl: './add-unavailable-apartment-dialog.html',
 })
-export class AddUnavailableApartmentDialogComponent extends Unsubscribable implements OnInit {
+export class AddUnavailableApartmentDialogComponent implements OnInit {
 
   addForm: FormGroup;
-
+  isError = false;
   unavailableApartment = {} as UnavailableApartment;
   subscription: Subscription;
 
@@ -31,10 +33,12 @@ export class AddUnavailableApartmentDialogComponent extends Unsubscribable imple
   apartmentsList: Apartments[];
   selectedApartment: Apartments;
 
-  // tslint:disable-next-line:max-line-length
-  constructor(private formBuilder: FormBuilder, private http: HttpClient,
-              public selectService: SelectService, private datePipe: DatePipe) {
-    super(selectService);
+  constructor(private formBuilder: FormBuilder,
+              private http: HttpClient,
+              public selectService: SelectService,
+              private datePipe: DatePipe,
+              private snackBar: MatSnackBar,
+              private matDialogRef: MatDialogRef<AddUnavailableApartmentDialogComponent>) {
     this.getAllApartments();
   }
 
@@ -60,6 +64,7 @@ export class AddUnavailableApartmentDialogComponent extends Unsubscribable imple
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.addForm.valid) {
       this.setUnavailableApartment();
     }
@@ -96,6 +101,14 @@ export class AddUnavailableApartmentDialogComponent extends Unsubscribable imple
       res => {
         console.log(res);
         this.unavailableApartment = (res as UnavailableApartment);
+        this.isError = false;
+        this.matDialogRef.close();
+        this.selectService.announceAdd(res);
+        this.snackBar.open('Unavailable apartment has been added!', 'Ok', { duration: 6000});
+      },
+      error => {
+        this.isError = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok', { duration: 6000});
       });
   }
 }

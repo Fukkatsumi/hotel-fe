@@ -118,6 +118,12 @@ input[type="checkbox"]:checked + label h3 {
   margin: 10px auto;
 }
 
+.form-loader2 {
+  display: grid;
+  width: 80px;
+  margin-left: 100px;
+}
+
 
 .services {
   display: flex;

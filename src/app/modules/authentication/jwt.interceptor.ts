@@ -5,14 +5,16 @@ import {Observable, throwError} from 'rxjs';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 import {catchError} from "rxjs/operators";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class JWTInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthenticationService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authService.token;
+    const token = this.authService.token();
     if (req.url.includes('authenticate')) {
       return next.handle(req);
     }

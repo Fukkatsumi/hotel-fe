@@ -71,6 +71,12 @@ app-login-form {
   background-color: ghostwhite;
 }
 
+img{
+  width: 210px;
+  height: 220px;
+  margin: 10px;
+}
+
 .canceled .task,
 .failed .task,
 .complete .task {

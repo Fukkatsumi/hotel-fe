@@ -11,7 +11,8 @@ import {SelectService} from '../../../../../services/select.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {DeleteApartmentPricesDialogComponent} from '../delete-apartment-prices-dialog/delete-apartment-prices-dialog.component';
-import {DatePipe} from "@angular/common";
+import {DatePipe} from '@angular/common';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -25,7 +26,7 @@ const URL = new ConstantsService().BASE_URL;
   templateUrl: './change-apartment-prices-dialog.html',
 })
 export class ChangeApartmentPricesDialogComponent extends Unsubscribable implements OnInit {
-
+  isError = false;
   addForm: FormGroup;
 
   apartmentPrice = {} as ApartmentPrice;
@@ -40,7 +41,8 @@ export class ChangeApartmentPricesDialogComponent extends Unsubscribable impleme
               private http: HttpClient,
               private dataTransfer: DataTransferService,
               public selectService: SelectService,
-              private datePipe: DatePipe) {
+              private datePipe: DatePipe,
+              private snackBar: MatSnackBar) {
     super(selectService);
     this.getAllApartmentsClasses();
     this.apartmentPrice = dataTransfer.getData();
@@ -82,6 +84,7 @@ export class ChangeApartmentPricesDialogComponent extends Unsubscribable impleme
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.addForm.valid) {
       this.setApartmentPrice();
       this.createApartmentPrice();
@@ -91,19 +94,23 @@ export class ChangeApartmentPricesDialogComponent extends Unsubscribable impleme
   createApartmentPrice() {
     this.http.put(URL + 'apartmentPrices/' + this.apartmentPrice.id, this.apartmentPrice).subscribe(
       res => {
-        console.log(res);
         this.apartmentPrice = (res as ApartmentPrice);
-      });
+        this.isError = false;
+        this.snackBar.open('Class price has been changed!', 'Ok',
+          {duration: 5000});
+      },
+      error => {
+        this.isError = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok',
+          { duration: 5000 }); });
   }
 
   setApartmentPrice() {
     const startDateCleaned = this.datePipe.transform(this.addForm.value.startPeriod, 'yyyy-MM-dd');
     const endDateCleaned = this.datePipe.transform(this.addForm.value.endPeriod, 'yyyy-MM-dd');
-    this.addForm.setValue({
+    this.addForm.patchValue({
       startPeriod: startDateCleaned,
-      endPeriod: endDateCleaned,
-      nameClass: this.addForm.value.nameClass,
-      price: this.addForm.value.price
+      endPeriod: endDateCleaned
     });
     this.apartmentPrice.apartmentClass = this.selectedApartmentsClass;
     this.apartmentPrice.startPeriod = this.addForm.value.startPeriod;
@@ -126,7 +133,8 @@ export class ChangeApartmentPricesDialogComponent extends Unsubscribable impleme
 
 
   deleteApartmentPrice() {
-    const dialogRef = this.dialog.open(DeleteApartmentPricesDialogComponent);
+    const dialogRef = this.dialog.open(DeleteApartmentPricesDialogComponent,
+      {disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

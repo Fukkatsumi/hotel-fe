@@ -9,6 +9,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {Unsubscribable} from "../../../../../component/Unsubscribable";
 import {Subscription} from "rxjs";
 import {SelectService} from "../../../../../services/select.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -25,6 +26,7 @@ const URL = new ConstantsService().BASE_URL;
   providedIn: 'root'
 })
 export class ChangeApartmentsClassesDialogComponent extends Unsubscribable implements OnInit {
+  isError = false;
 
   changeForm: FormGroup;
   subscription: Subscription;
@@ -33,7 +35,8 @@ export class ChangeApartmentsClassesDialogComponent extends Unsubscribable imple
   constructor(public dialog: MatDialog, private formBuilder: FormBuilder,
               private http: HttpClient,
               dataTransfer: DataTransferService,
-              public selectService: SelectService) {
+              public selectService: SelectService,
+              private snackBar: MatSnackBar) {
     super(selectService);
     this.apartmentClass = dataTransfer.getData();
     console.log(this.apartmentClass);
@@ -72,6 +75,7 @@ export class ChangeApartmentsClassesDialogComponent extends Unsubscribable imple
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.changeForm.valid) {
       this.setApartment();
       this.changeApartment();
@@ -83,6 +87,13 @@ export class ChangeApartmentsClassesDialogComponent extends Unsubscribable imple
       res => {
         console.log(res);
         this.apartmentClass = (res as ApartmentsClass);
+        this.isError = false;
+        this.snackBar.open('Class has been changed!', 'Ok',
+          {duration: 5000});
+      }, error => {
+        this.isError = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok',
+          {duration: 5000});
       });
   }
 
@@ -94,7 +105,8 @@ export class ChangeApartmentsClassesDialogComponent extends Unsubscribable imple
   }
 
   deleteDialog() {
-    const dialogRef = this.dialog.open(DeleteApartmentsClassesDialogComponent);
+    const dialogRef = this.dialog.open(DeleteApartmentsClassesDialogComponent,
+      {disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

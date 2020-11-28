@@ -6,6 +6,8 @@ import {ConstantsService} from '../../../../../services/constants.service';
 import {DataTransferService} from "../../../../../services/data-transfer.service";
 import {SelectService} from "../../../../../services/select.service";
 import {take} from "rxjs/operators";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialogRef} from "@angular/material/dialog";
 
 
 /**
@@ -21,7 +23,9 @@ const URL = new ConstantsService().BASE_URL;
 })
 export class DeleteApartmentsClassesDialogComponent {
 
-  constructor(private http: HttpClient, private selectService: SelectService) {
+  constructor(private http: HttpClient, private selectService: SelectService,
+              private snackBar: MatSnackBar,
+              private matDialogRef: MatDialogRef<DeleteApartmentsClassesDialogComponent>) {
   }
 
   deleteApartment() {
@@ -29,7 +33,17 @@ export class DeleteApartmentsClassesDialogComponent {
       .pipe(take(1))
       .subscribe( id => {
       this.http.delete(URL + 'apartmentsClasses/' + id.id)
-        .subscribe(res => this.selectService.announceSelect(null));
+        .subscribe(res => {
+          this.snackBar.open('Class has been deleted!', 'Ok',
+            {duration: 6000});
+          this.selectService.announceSelect(null);
+          this.matDialogRef.close();
+          this.selectService.announceDelete(1);
+        }, error => {
+          this.matDialogRef.close();
+          this.snackBar.open('Error: '.concat(error.error), 'Ok',
+            { duration: 6000});
+        });
       });
   }
 }

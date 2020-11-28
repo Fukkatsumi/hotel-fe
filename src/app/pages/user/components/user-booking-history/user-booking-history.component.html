@@ -2,30 +2,37 @@
   <app-loading-animation></app-loading-animation>
 </div>
 
-<div *ngIf="userBookingsHistory[0] == null"><p>You have not created any orders yet.</p></div>
+<div *ngIf="userBookingsHistory != null && userBookingsHistory[0] == null"><p>You have not created any orders yet.</p></div>
 
 <div class="userBookingHistory" *ngIf="userBookingsHistory != null">
-  <div class="booking" *ngFor="let booking of userBookingsHistory"
-       [ngClass]="{'finished': booking.endDate < currentDate}">
+
+  <div class="booking" *ngFor="let bookingWithServ of userBookingsHistory; let i = index" [ngClass]="{'finished': bookingWithServ.booking.endDate < currentDate}">
     <div class="info">
-      <p>{{booking.startDate}} - {{booking.endDate}}</p>
-      <p>Apartment class: {{booking.apartmentClass.nameClass}}</p>
-      <p>Price: {{booking.totalPrice}}</p>
-      <button mat-button (click)="deleteBooking(booking.id)" *ngIf="booking.startDate > currentDate">Cancel booking
-      </button>
+      <p class="colored">{{bookingWithServ.booking.startDate}} - {{bookingWithServ.booking.endDate}}</p>
+      <p>Apartment class: <span class="colored">{{bookingWithServ.booking.apartmentClass.nameClass}}</span></p>
+      <ul *ngIf="bookingWithServ.services.length > 0" class="service-list">
+        <li *ngFor="let serv of bookingWithServ.services">{{serv.bookingAddServices.serviceName}}</li>
+      </ul>
+      <p>Price: <span class="colored">{{bookingWithServ.booking.totalPrice}}$</span></p>
+      <button mat-button (click)="deleteBooking(bookingWithServ.booking.id)" *ngIf="bookingWithServ.booking.startDate > currentDate">Cancel booking</button>
     </div>
 
-    <div class="review" *ngIf="booking.endDate < currentDate">
-      <form [formGroup]="reviewForm" *ngIf="booking.review == null">
+    <div class="review" *ngIf="bookingWithServ.booking.endDate < currentDate">
+      <form *ngIf="bookingWithServ.booking.review == null">
         <mat-form-field>
-          <textarea matInput placeholder="Your review" formControlName="review"></textarea>
+          <textarea matInput placeholder="Your review" name="review" [(ngModel)]="reviewForms[i].text" (ngModelChange)="validateReview(i)" required></textarea>
           <mat-hint align="start">Between 10 and 300 symbols</mat-hint>
         </mat-form-field>
-        <button mat-button (click)="sendReview(booking.id)" *ngIf="booking.endDate < currentDate">Send review</button>
+        <div class="errors" *ngIf="!reviewForms[i].valid">
+          <p *ngIf="reviewForms[i].errors.minLength">Must be longer then 9</p>
+          <p *ngIf="reviewForms[i].errors.maxLength">Must be shorter then 300</p>
+          <p *ngIf="reviewForms[i].errors.pattern">This field can contain only letters, spaces, dots, commas or -</p>
+        </div>
+        <button mat-button (click)="sendReview(i)" *ngIf="bookingWithServ.booking.endDate < currentDate" [disabled]="!reviewForms[i].valid">Send review</button>
       </form>
-      <div class="review-text" *ngIf="booking.review != null">
+      <div class="review-text" *ngIf="bookingWithServ.booking.review != null">
         <p>Your review: </p>
-        <p>{{booking.review}}</p>
+        <p>{{bookingWithServ.booking.review}}</p>
       </div>
     </div>
   </div>

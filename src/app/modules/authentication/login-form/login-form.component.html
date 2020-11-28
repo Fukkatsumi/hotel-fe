@@ -5,6 +5,7 @@
     <mat-error *ngIf="login().errors">
       <span *ngIf="login().errors.required">This field must be filled</span>
       <span *ngIf="login().errors.loginError">Unknown login/password pair</span>
+      <span *ngIf="login().errors.pattern">This field can contain only letters, numbers or _</span>
     </mat-error>
   </mat-form-field>
 
@@ -13,6 +14,7 @@
     <input matInput type="password" formControlName="password" id="password" required (ngModelChange)="onChange()">
     <mat-error *ngIf="password().errors">
       <span *ngIf="password().errors.required">This field must be filled</span>
+      <span *ngIf="password().errors.pattern">This field can contain only letters, numbers or _</span>
     </mat-error>
   </mat-form-field>
   <button mat-button type="submit" [disabled]="!isValid" class="submit-button">Log in</button>

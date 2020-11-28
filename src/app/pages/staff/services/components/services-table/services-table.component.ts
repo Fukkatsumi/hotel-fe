@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {takeUntil} from 'rxjs/operators';
+import {AfterViewInit, ChangeDetectorRef, Component, Injectable, OnInit, ViewChild} from '@angular/core';
+import {take, takeUntil} from 'rxjs/operators';
 import {Unsubscribable} from '../../../../../component/Unsubscribable';
 import {HttpClient} from '@angular/common/http';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
@@ -8,6 +8,8 @@ import {ConstantsService} from '../../../../../services/constants.service';
 import {DataTransferService} from '../../../../../services/data-transfer.service';
 import {Service} from '../../../../../component/service';
 import {SelectService} from "../../../../../services/select.service";
+import {DataSource} from "@angular/cdk/collections";
+import {Subscription} from "rxjs";
 
 const URL = new ConstantsService().BASE_URL;
 
@@ -20,14 +22,20 @@ const URL = new ConstantsService().BASE_URL;
   styleUrls: ['../../../styles/table.css', '../../../styles/first-row-padding-fix.css'],
   templateUrl: 'services-table.html',
 })
+@Injectable({
+  providedIn: 'root'
+})
 export class ServicesTableComponent extends Unsubscribable implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
   servicesList = new MatTableDataSource<Service>();
   displayedColumns = ['id', 'serviceName', 'price'];
+  subscription: Subscription;
+  subscriptionDelete: Subscription;
 
   serviceNameFilter = new FormControl('');
   priceFilter = new FormControl('');
@@ -53,7 +61,42 @@ export class ServicesTableComponent extends Unsubscribable implements OnInit, Af
     this.selectService.announceSelect(row);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.subscription = this.selectService.addAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartmentsClasses();
+          this.ngAfterViewInit();
+          this.selectService.announceAdd(null);
+          // console.log('SelectService', res);
+          // this.http.get(URL + 'bookingAddServices/' + res.toString())
+          //   .subscribe(response => {
+          //     const service = response as Service;
+          //     this.servicesList.data.push(service);
+          //     console.log('get by id', response);
+          //     const serviceTempList = new MatTableDataSource<Service>();
+          //     serviceTempList.data = this.servicesList.data;
+          //     this.servicesList = new MatTableDataSource<Service>();
+          //     this.servicesList.data = serviceTempList.data;
+          //     this.ngAfterViewInit();
+          //     this.selectService.announceAdd(null);
+          //   });
+        }
+      }, error => {
+        console.log(error);
+      });
+    this.subscriptionDelete = this.selectService.deleteAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          console.log('SelectService', res);
+          this.getAllApartmentsClasses();
+          this.ngAfterViewInit();
+          this.selectService.announceDelete(null);
+        }
+      });
+
     this.serviceNameFilter.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(
         serviceName => {
@@ -79,6 +122,7 @@ export class ServicesTableComponent extends Unsubscribable implements OnInit, Af
     this.http.get(URL + 'bookingAddServices/').subscribe(res => {
       console.log(res);
       this.servicesList.data = (res as Service[]);
+      this.isEmptyTable = true;
     });
   }
 

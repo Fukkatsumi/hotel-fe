@@ -13,6 +13,9 @@ import {ChangeApartmentsClassesDialogComponent} from './components/change-apartm
 import {AddApartmentsClassesDialogComponent} from './components/add-apartment-class-dialog/add-apartments-classes-dialog.component';
 import {DeleteApartmentsClassesDialogComponent} from './components/delete-apartment-class-dialog/delete-apartments-classes-dialog.component';
 import {MatExpansionModule} from "@angular/material/expansion";
+import {AnimationsModule} from "../../../modules/animations/animations.module";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   imports: [
@@ -26,7 +29,10 @@ import {MatExpansionModule} from "@angular/material/expansion";
     MatDialogModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    AnimationsModule,
+    MatSnackBarModule,
+    MatSidenavModule
   ],
   exports: [
     MatButtonModule,

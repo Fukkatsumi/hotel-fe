@@ -9,6 +9,7 @@ import {SelectService} from "../../../../../services/select.service";
 import {Subscription} from "rxjs";
 import {DeleteServicesDialogComponent} from "../delete-services-dialog/delete-services-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -29,11 +30,13 @@ export class ChangeServicesDialogComponent extends Unsubscribable implements OnI
   changeForm: FormGroup;
   service = {} as Service;
   subscription: Subscription;
+  isError = false;
 
   constructor(private formBuilder: FormBuilder, private http: HttpClient,
               dataTransfer: DataTransferService,
               public dialog: MatDialog,
-              public selectService: SelectService) {
+              public selectService: SelectService,
+              private snackBar: MatSnackBar) {
     super(selectService);
     this.service = dataTransfer.getData();
     console.log(this.service);
@@ -70,6 +73,7 @@ export class ChangeServicesDialogComponent extends Unsubscribable implements OnI
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.changeForm.valid) {
       this.setService();
       this.changeService();
@@ -81,6 +85,11 @@ export class ChangeServicesDialogComponent extends Unsubscribable implements OnI
       res => {
         console.log(res);
         this.service = (res as Service);
+        this.isError = false;
+        this.snackBar.open('Additional service has been changed!', 'Ok', {duration: 6000});
+      }, error => {
+        this.isError = false;
+        this.snackBar.open(error.error, 'Ok', {duration: 6000});
       });
   }
 
@@ -92,7 +101,8 @@ export class ChangeServicesDialogComponent extends Unsubscribable implements OnI
 
 
   deleteDialog() {
-    const dialogRef = this.dialog.open(DeleteServicesDialogComponent);
+    const dialogRef = this.dialog.open(DeleteServicesDialogComponent,
+      {disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

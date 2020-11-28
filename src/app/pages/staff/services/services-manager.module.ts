@@ -13,6 +13,9 @@ import {ChangeServicesDialogComponent} from './components/change-services-dialog
 import {AddServicesDialogComponent} from './components/add-services-dialog/add-services-dialog.component';
 import {DeleteServicesDialogComponent} from './components/delete-services-dialog/delete-services-dialog.component';
 import {MatExpansionModule} from "@angular/material/expansion";
+import {AnimationsModule} from "../../../modules/animations/animations.module";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   imports: [
@@ -26,7 +29,10 @@ import {MatExpansionModule} from "@angular/material/expansion";
     MatDialogModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    AnimationsModule,
+    MatSnackBarModule,
+    MatSidenavModule
   ],
   exports: [
     MatButtonModule,

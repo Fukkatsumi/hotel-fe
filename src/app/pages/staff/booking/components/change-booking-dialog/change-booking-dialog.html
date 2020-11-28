@@ -1,112 +1,115 @@
-<div class="change-component">
-  <mat-accordion>
-    <mat-expansion-panel [expanded]="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Change
-        </mat-panel-title>
-        <mat-panel-description>
-          Apartment
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <form [formGroup]="changeForm" (ngSubmit)="onSubmit()" class="change-apartment">
-        <mat-form-field>
-          <input matInput [matDatepicker]="pickerStart"
-                 (dateChange)="onClickStartPicker()"
-                 required="required" formControlName="startDate"
-                 class="full-width" placeholder="Start date">
-          <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-          <mat-datepicker #pickerStart></mat-datepicker>
-          <!--<input matInput required="required" formControlName="startDate" class="full-width" placeholder="Start date"> -->
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <input matInput [matDatepicker]="pickerEnd"
-                 (dateChange)="onClickEndPicker()"
-                 required="required" formControlName="endDate"
-                 class="full-width" placeholder="End date">
-          <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-          <mat-datepicker #pickerEnd></mat-datepicker>
-          <!-- <input matInput required="required" formControlName="endDate" class="full-width" placeholder="End date"> -->
-        </mat-form-field>
-    <br/>
-        <!--    <mat-form-field>-->
-        <!--      <input matInput formControlName="totalPrice" class="full-width" placeholder="Total price">-->
-        <!--    </mat-form-field>-->
-        <!--    <br/>-->
-    <mat-form-field>
-      <input matInput formControlName="comment" class="full-width" placeholder="Comments">
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <input matInput formControlName="review" class="full-width" placeholder="Review">
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <mat-select placeholder="Status" formControlName="bookingStatus">
-        <mat-option *ngFor="let bookingStatus of status"
-                    (click)="onSelectStatus(bookingStatus)"
-                    value={{bookingStatus}}>
+<div *ngIf="!isError && userList != null">
+  <div class="change-component">
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Change
+          </mat-panel-title>
+          <mat-panel-description>
+            Apartment
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <form [formGroup]="changeForm" class="change-apartment">
+          <mat-form-field>
+            <input matInput [matDatepicker]="pickerStart"
+                   (dateChange)="onClickStartPicker()"
+                   required="required" formControlName="startDate"
+                   class="full-width" placeholder="Start date">
+            <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+            <!--<input matInput required="required" formControlName="startDate" class="full-width" placeholder="Start date"> -->
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input matInput [matDatepicker]="pickerEnd"
+                   (dateChange)="onClickEndPicker()"
+                   required="required" formControlName="endDate"
+                   class="full-width" placeholder="End date">
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+            <!-- <input matInput required="required" formControlName="endDate" class="full-width" placeholder="End date"> -->
+          </mat-form-field>
+          <br/>
+          <!--    <mat-form-field>-->
+          <!--      <input matInput formControlName="totalPrice" class="full-width" placeholder="Total price">-->
+          <!--    </mat-form-field>-->
+          <!--    <br/>-->
+          <mat-form-field>
+            <input matInput formControlName="comment" class="full-width" placeholder="Comments">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input matInput formControlName="review" class="full-width" placeholder="Review">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-select placeholder="Status" formControlName="bookingStatus">
+              <mat-option *ngFor="let bookingStatus of status"
+                          (click)="onSelectStatus(bookingStatus)"
+                          value={{bookingStatus}}>
 
-          {{bookingStatus}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <mat-label>Email</mat-label>
-      <mat-select placeholder="Booked by(user email)" formControlName="email" required>
-        <mat-option *ngFor="let user of userList"
-                    (click)="onSelectEmail(user)"
-                    value={{user?.email}}>
+                {{bookingStatus}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <mat-select placeholder="Booked by(user email)" formControlName="email" required>
+              <mat-option *ngFor="let user of userList"
+                          (click)="onSelectEmail(user)"
+                          value={{user?.email}}>
 
-          {{user?.email}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <mat-label>Apartments</mat-label>
-      <mat-select placeholder="Apartment room number" formControlName="roomNumber"
-                  [disabled]="!selectedApartmentsClass">
-        <mat-option *ngFor="let apartment of apartmentsList"
-                    (click)="onSelectAprtmnt(apartment)"
-                    value={{apartment?.roomNumber}}>
+                {{user?.email}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>Apartments</mat-label>
+            <mat-select placeholder="Apartment room number" formControlName="roomNumber"
+                        [disabled]="!selectedApartmentsClass">
+              <mat-option *ngFor="let apartment of apartmentsList"
+                          (click)="onSelectAprtmnt(apartment)"
+                          [value]="apartment?.roomNumber">
 
-          {{apartment?.roomNumber}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <mat-label>Apartments Class</mat-label>
-      <mat-select placeholder="Class name" formControlName="nameClass">
-        <mat-option *ngFor="let apartmentClass of apartmentsClassesList"
-                    (click)="onSelectAprtmntClass(apartmentClass)"
-                    value={{apartmentClass?.nameClass}}>
+                {{apartment?.roomNumber}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <mat-label>Apartments Class</mat-label>
+            <mat-select placeholder="Class name" formControlName="nameClass" [disabled]="true">
+              <mat-option *ngFor="let apartmentClass of apartmentsClassesList"
+                          (click)="onSelectAprtmntClass(apartmentClass)"
+                          value={{apartmentClass?.nameClass}}>
 
-          {{apartmentClass?.nameClass}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-        <mat-dialog-actions align="end">
-          <p></p>
+                {{apartmentClass?.nameClass}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-dialog-actions align="end">
+            <p></p>
+            <button style="background-color: lightskyblue" class="mat-button"
+                    mat-raised-button (click)="viewBookingAddServices()"> Services
+          </button>
           <button style="background-color: tomato" class="mat-button"
                   mat-raised-button (click)="deleteBooking()">Delete
-          </button>
-          <button mat-button
-                  [mat-dialog-close]="true">
-            Cancel
-          </button>
-          <button
-                  type="submit"
-                  (click)="checkValid()"
-                  [disabled]="isSubmitDisabled()" mat-button>
-            Change
-          </button>
-        </mat-dialog-actions>
-      </form>
-    </mat-expansion-panel>
-  </mat-accordion>
+            </button>
+            <button
+              type="submit"
+              (click)="onSubmit()"
+              [disabled]="isSubmitDisabled()" mat-button>
+              Change
+            </button>
+          </mat-dialog-actions>
+        </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 </div>
-
+<div *ngIf="isError || userList == null" class="form-loader">
+  <app-loading-animation></app-loading-animation>
+</div>

@@ -11,6 +11,8 @@ export class Unsubscribable implements OnDestroy {
 
   ngOnDestroy(): void {
     this.selectService.announceSelect(null);
+    this.selectService.announceAdd(null);
+    this.selectService.announceDelete(null);
     this.destroy$.next();
   }
 }

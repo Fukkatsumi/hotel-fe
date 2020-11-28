@@ -8,6 +8,7 @@ import {ConstantsService} from '../../../../../services/constants.service';
 import {FormControl} from '@angular/forms';
 import {DataTransferService} from '../../../../../services/data-transfer.service';
 import {SelectService} from "../../../../../services/select.service";
+import {Subscription} from "rxjs";
 
 
 const URL = new ConstantsService().BASE_URL;
@@ -25,6 +26,9 @@ export class ApartmentPricesTableComponent extends Unsubscribable implements OnI
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  subscription: Subscription;
+  subscriptionDelete: Subscription;
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
   apartmentPricesList = new MatTableDataSource<ApartmentPrice>();
@@ -37,7 +41,6 @@ export class ApartmentPricesTableComponent extends Unsubscribable implements OnI
   apartmentClassFilter = new FormControl('');
 
   filterValues = {
-    id: '',
     price: '',
     startPeriod: '',
     endPeriod: '',
@@ -59,6 +62,27 @@ export class ApartmentPricesTableComponent extends Unsubscribable implements OnI
   }
 
   ngOnInit() {
+    this.subscription = this.selectService.addAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartmentPrices();
+          this.ngAfterViewInit();
+          this.selectService.announceAdd(null);
+        }
+      }, error => {
+        console.log(error);
+      });
+    this.subscriptionDelete = this.selectService.deleteAnnounced$
+      .subscribe(res => {
+        if (res != null) {
+          this.isEmptyTable = false;
+          this.getAllApartmentPrices();
+          this.ngAfterViewInit();
+          this.selectService.announceDelete(null);
+        }
+      });
+
     this.totalPriceFilter.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(
         price => {
@@ -96,6 +120,7 @@ export class ApartmentPricesTableComponent extends Unsubscribable implements OnI
   public getAllApartmentPrices = () => {
     this.http.get(URL + 'apartmentPrices/').subscribe(res => {
       console.log(res);
+      this.isEmptyTable = true;
       this.dataSource.data = (res as ApartmentPrice[]);
     });
   }
@@ -107,7 +132,7 @@ export class ApartmentPricesTableComponent extends Unsubscribable implements OnI
       let result = data.startPeriod.toString().toLowerCase().indexOf(searchTerms.startPeriod) !== -1
         && data.endPeriod.toString().toLowerCase().indexOf(searchTerms.endPeriod) !== -1
         && data.price.toString().toLowerCase().indexOf(searchTerms.price) !== -1
-        && data.apartmentClass.nameClass.indexOf(searchTerms.nameClass) !== -1;
+        && data.apartmentClass.nameClass.toString().toLowerCase().indexOf(searchTerms.nameClass) !== -1;
       return result;
     };
     return filterFunction;

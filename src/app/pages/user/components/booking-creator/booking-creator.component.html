@@ -51,7 +51,7 @@
       </div>
       <div *ngIf="freeapartmentClasses !== null">
 
-        <p *ngIf="freeapartmentClasses[0] == null">We do not have free apartments for these dates.</p>
+        <p *ngIf="freeapartmentClasses != null && freeapartmentClasses[0] == null">We do not have free apartments for these dates.</p>
 
         <div class="apartment-classes-list">
           <div *ngFor="let apartClass of freeapartmentClasses">
@@ -126,7 +126,7 @@
     </div>
     <form>
       <button mat-button type="reset" matStepperPrevious (click)="onChangeServicesClick()">Change services</button>
-      <button mat-button matStepperNext (click)="onConfirmBookingClick()">Confirme booking</button>
+      <button mat-button matStepperNext (click)="onConfirmBookingClick()">Confirm booking</button>
     </form>
   </mat-step>
 </mat-horizontal-stepper>

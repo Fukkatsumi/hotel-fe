@@ -3,6 +3,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {ConstantsService} from '../../../../../services/constants.service';
 import {Service} from '../../../../../component/service';
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialogRef} from "@angular/material/dialog";
+import {SelectService} from "../../../../../services/select.service";
+import {Unsubscribable} from "../../../../../component/Unsubscribable";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -17,10 +21,14 @@ const URL = new ConstantsService().BASE_URL;
 })
 export class AddServicesDialogComponent implements OnInit {
 
+  isError = false;
   addServiceForm: FormGroup;
   service = {} as Service;
 
-  constructor(private formBuilder: FormBuilder, private http: HttpClient) {
+  constructor(private formBuilder: FormBuilder, private http: HttpClient,
+              private snackBar: MatSnackBar,
+              private matDialogRef: MatDialogRef<AddServicesDialogComponent>,
+              public selectService: SelectService) {
   }
 
   ngOnInit(): void {
@@ -40,6 +48,7 @@ export class AddServicesDialogComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.addServiceForm.valid) {
       this.setService();
       this.createService();
@@ -51,6 +60,13 @@ export class AddServicesDialogComponent implements OnInit {
       res => {
         console.log(res);
         this.service = (res as Service);
+        this.isError = false;
+        this.selectService.announceAdd(res);
+        this.matDialogRef.close();
+        this.snackBar.open('Additional Service has been created!', 'Ok', {duration: 6000});
+      }, error => {
+        this.isError = false;
+        this.snackBar.open(error.error, 'Ok', {duration: 6000});
       });
   }
 

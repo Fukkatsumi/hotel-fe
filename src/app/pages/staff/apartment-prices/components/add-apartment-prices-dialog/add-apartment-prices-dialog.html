@@ -1,44 +1,51 @@
-<form [formGroup]="addForm" (ngSubmit)="onSubmit()" class="change-apartment">
-  <h2 mat-dialog-title>Add Booking</h2>
-  <mat-dialog-content class="mat-typography">
-    <mat-form-field>
-      <input matInput [matDatepicker]="pickerStart"
-             required="required" formControlName="startPeriod"
-             class="full-width" placeholder="Start period">
-      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-      <mat-datepicker #pickerStart></mat-datepicker>
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <input matInput [matDatepicker]="pickerEnd"
-             required="required" formControlName="endPeriod"
-             class="full-width" placeholder="End period"
-             [disabled]="!addForm.value.startPeriod">
-      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-      <mat-datepicker #pickerEnd></mat-datepicker>
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <input matInput formControlName="price" class="full-width" placeholder="Price">
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <mat-label>Apartments Class</mat-label>
-      <mat-select required="required" placeholder="Class name" formControlName="nameClass">
-        <mat-option *ngFor="let apartmentClass of apartmentsClassesList"
-                    (click)="onSelectAprtmntClass(apartmentClass)"
-                    value={{apartmentClass?.nameClass}}>
+<form [formGroup]="addForm" class="change-apartment">
+  <div *ngIf="isError" class="form-loader">
+    <app-loading-animation></app-loading-animation>
+  </div>
+  <div *ngIf="!isError">
+    <h2 mat-dialog-title>Add Class price</h2>
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerStart"
+               required="required" formControlName="startPeriod"
+               class="full-width" placeholder="Start period">
+        <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+        <mat-datepicker #pickerStart></mat-datepicker>
+      </mat-form-field>
+      <br/>
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerEnd"
+               required="required" formControlName="endPeriod"
+               class="full-width" placeholder="End period"
+               [disabled]="!addForm.value.startPeriod">
+        <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerEnd></mat-datepicker>
+      </mat-form-field>
+      <br/>
+      <mat-form-field>
+        <input matInput formControlName="price" class="full-width" placeholder="Price" required>
+      </mat-form-field>
+      <br/>
+      <mat-form-field>
+        <mat-label>Apartments Class</mat-label>
+        <mat-select required="required" placeholder="Class name" formControlName="nameClass">
+          <mat-option *ngFor="let apartmentClass of apartmentsClassesList"
+                      (click)="onSelectAprtmntClass(apartmentClass)"
+                      value={{apartmentClass?.nameClass}}>
 
-          {{apartmentClass?.nameClass}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br/>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button mat-button [mat-dialog-close]="true" mat-dialog-close>Cancel</button>
-    <button type="submit" (click)="checkValid()" mat-dialog-close [disabled]="isSubmitDisabled()" mat-button>Add
-    </button>
-  </mat-dialog-actions>
+            {{apartmentClass?.nameClass}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br/>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="true">Cancel</button>
+      <button type="submit"
+              (click)="onSubmit()"
+              [disabled]="isSubmitDisabled()" mat-button>Add
+      </button>
+    </mat-dialog-actions>
+  </div>
 </form>
 

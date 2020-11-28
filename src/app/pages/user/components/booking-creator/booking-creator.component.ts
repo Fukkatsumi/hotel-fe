@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatHorizontalStepper} from '@angular/material';
 import {DatePipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {ApartmentsClass} from '../../../../component/apartments-class';
@@ -35,13 +36,12 @@ export class BookingCreatorComponent implements OnInit {
   private isApartmentClassFormComplete = false;
   // Third step
   private bookingServices: BookingAddService[];
-  private currentServices: { id: number, countServices: number }[];
+  private currentServices: {id: number, countServices: number}[];
   // Finish step
   private dbBooking: Booking;
   private dbCurrentBookingServices: BookingAddServicesWithCount[];
 
-  constructor(private fb: FormBuilder, private datePipe: DatePipe, private http: HttpClient, private authService: AuthenticationService) {
-  }
+  constructor(private fb: FormBuilder, private datePipe: DatePipe, private http: HttpClient, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     this.datesForm = this.fb.group({
@@ -69,7 +69,7 @@ export class BookingCreatorComponent implements OnInit {
 
   onDatesFormChange() {
     let tmp = true;
-    for (const key in this.datesForm.controls) {
+    for (let key in this.datesForm.controls) {
       tmp = tmp && this.datesForm.get(key).errors === null && this.datesForm.get(key).value !== null;
     }
     this.isDatesFromComplete = tmp;
@@ -255,7 +255,7 @@ export class BookingCreatorComponent implements OnInit {
   }
 
   onConfirmBookingClick() {
-    this.http.patch(BASE_URL + 'bookings/' + this.currentBooking.id, {status: 'Confirmed'})
+    this.http.patch(BASE_URL + 'bookings/' + this.currentBooking.id, {bookingStatus: 'Confirmed'})
       .subscribe(
         data => {
           this.currentBooking.bookingStatus = 'Confirmed';

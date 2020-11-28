@@ -1,19 +1,24 @@
-<form [formGroup]="addServiceForm" (ngSubmit)="onSubmit()" class="change-apartment">
-  <h2 mat-dialog-title>Add service</h2>
-  <mat-dialog-content class="mat-typography">
-    <mat-form-field>
-      <input matInput required="required" formControlName="serviceName" class="full-width" placeholder="Service name">
-    </mat-form-field>
-    <br/>
-    <mat-form-field>
-      <input matInput required="required" formControlName="price" class="full-width" placeholder="Price">
-    </mat-form-field>
-    <br/>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button mat-button [mat-dialog-close]="true" mat-dialog-close>Cancel</button>
-    <button type="submit" (click)="checkValid()" mat-dialog-close [disabled]="isSubmitDisabled()" mat-button>Add
-    </button>
-  </mat-dialog-actions>
+<form [formGroup]="addServiceForm" class="change-apartment">
+  <div *ngIf="isError" class="form-loader">
+    <app-loading-animation></app-loading-animation>
+  </div>
+  <div *ngIf="!isError">
+    <h2 mat-dialog-title>Add service</h2>
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field>
+        <input matInput required="required" formControlName="serviceName" class="full-width" placeholder="Service name">
+      </mat-form-field>
+      <br/>
+      <mat-form-field>
+        <input matInput required="required" formControlName="price" class="full-width" placeholder="Price">
+      </mat-form-field>
+      <br/>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="true" mat-dialog-close>Cancel</button>
+      <button type="submit" (click)="onSubmit()" [disabled]="isSubmitDisabled()" mat-button>Add
+      </button>
+    </mat-dialog-actions>
+  </div>
 </form>
 

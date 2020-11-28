@@ -12,6 +12,7 @@ import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {DeleteUnavailableApartmentDialogComponent} from '../delete-unavailable-apartment-dialog/delete-unavailable-apartment-dialog.component';
 import {DatePipe} from "@angular/common";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -28,6 +29,7 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
 
   addForm: FormGroup;
 
+  isError = false;
   unavailableApartment = {} as UnavailableApartment;
   subscription: Subscription;
 
@@ -40,7 +42,8 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
               private http: HttpClient,
               private dataTransfer: DataTransferService,
               public selectService: SelectService,
-              private datePipe: DatePipe) {
+              private datePipe: DatePipe,
+              private snackBar: MatSnackBar) {
     super(selectService);
     this.getAllApartments();
     this.unavailableApartment = dataTransfer.getData();
@@ -49,7 +52,7 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
 
   ngOnInit(): void {
     this.addForm = this.formBuilder.group({
-      apartment: ['', Validators.required], // outputs room number
+      roomNumber: ['', Validators.required], // outputs room number
       causeDescription: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required]
@@ -68,7 +71,7 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
       startDate: row.startDate,
       endDate: row.endDate,
       causeDescription: row.causeDescription,
-      apartment: row.apartment.roomNumber
+      roomNumber: row.apartment.roomNumber
     });
   }
 
@@ -84,6 +87,7 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
   }
 
   onSubmit() {
+    this.isError = true;
     if (this.addForm.valid) {
       this.setUnavailableApartment();
       this.createUnavailableApartment();
@@ -109,6 +113,11 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
       res => {
         console.log(res);
         this.unavailableApartment = (res as UnavailableApartment);
+        this.isError = false;
+        this.snackBar.open('Unavailable apartment has been changed!', 'Ok', {duration: 8000});
+      }, error => {
+        this.isError = false;
+        this.snackBar.open('Error: '.concat(error.error), 'Ok', {duration: 8000});
       });
   }
 
@@ -127,7 +136,8 @@ export class ChangeUnavailableApartmentDialogComponent extends Unsubscribable im
 
 
   deleteUnavailableApartment() {
-    const dialogRef = this.dialog.open(DeleteUnavailableApartmentDialogComponent);
+    const dialogRef = this.dialog.open(DeleteUnavailableApartmentDialogComponent,
+      {disableClose: true, autoFocus: true});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

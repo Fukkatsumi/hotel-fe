@@ -1,51 +1,52 @@
-<div class="change-component">
-  <mat-accordion>
-    <mat-expansion-panel [expanded]="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Change
-        </mat-panel-title>
-        <mat-panel-description>
-          Staff
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <form [formGroup]="changeStaffFrom" (ngSubmit)="onSubmit()" class="change-apartment">
-        <mat-form-field>
-          <input required="required" matInput formControlName="firstname" class="full-width" placeholder="First name">
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-          <input required="required" matInput formControlName="lastname" class="full-width" placeholder="Last name">
-        </mat-form-field>
-        <br/>
-        <mat-label>is Active?</mat-label>
-        <mat-checkbox class="full-width" formControlName="active" aria-placeholder="isActive" checked></mat-checkbox>
-        <br/>
-        <mat-form-field>
-          <mat-select formControlName="speciality" placeholder="Speciality" required>
-            <mat-option *ngFor="let speciality of specialities"
-                        (click)="onSelectSpec(speciality)"
-                        value={{speciality}}>
-
-              {{speciality}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br/>
-        <mat-action-row align="end">
-          <button mat-raised-button
-                  mat-dialog-close
-                  [mat-dialog-close]="true">
-            Cancel
-          </button>
-          <button mat-raised-button
-                  type="submit"
-                  (click)="checkValid()"
-                  [disabled]="isSubmitDisabled()" mat-button>
+<div *ngIf="!isError">
+  <div class="change-component">
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
             Change
-          </button>
-        </mat-action-row>
-      </form>
-    </mat-expansion-panel>
-  </mat-accordion>
+          </mat-panel-title>
+          <mat-panel-description>
+            Staff
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <form [formGroup]="changeStaffFrom" class="change-apartment">
+          <mat-form-field>
+            <input required="required" matInput formControlName="firstname" class="full-width" placeholder="First name">
+          </mat-form-field>
+          <br/>
+          <mat-form-field>
+            <input required="required" matInput formControlName="lastname" class="full-width" placeholder="Last name">
+          </mat-form-field>
+          <br/>
+          <mat-label>is Active?</mat-label>
+          <mat-checkbox class="full-width" formControlName="active" aria-placeholder="isActive"></mat-checkbox>
+          <br/>
+          <mat-form-field>
+            <mat-select formControlName="speciality" placeholder="Speciality" required>
+              <mat-option *ngFor="let speciality of specialities"
+                          (click)="onSelectSpec(speciality)"
+                          value={{speciality}}>
+
+                {{speciality}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br/>
+          <mat-action-row align="end">
+
+            <button mat-raised-button
+                    type="submit"
+                    (click)="onSubmit()"
+                    [disabled]="isSubmitDisabled()" mat-button>
+              Change
+            </button>
+          </mat-action-row>
+        </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+<div *ngIf="isError" class="form-loader">
+  <app-loading-animation></app-loading-animation>
 </div>

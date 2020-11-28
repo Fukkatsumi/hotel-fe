@@ -24,6 +24,7 @@ export class UserTableComponent extends Unsubscribable implements OnInit, AfterV
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  isEmptyTable = false;
   private dataTransfer: DataTransferService;
   selectedRow: any;
   usersList = new MatTableDataSource<User>();
@@ -121,6 +122,7 @@ export class UserTableComponent extends Unsubscribable implements OnInit, AfterV
     this.http.get(URL + 'users/').subscribe(res => {
       console.log(res);
       this.usersList.data = (res as User[]);
+      this.isEmptyTable = true;
     });
   }
 
@@ -128,10 +130,10 @@ export class UserTableComponent extends Unsubscribable implements OnInit, AfterV
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
       return data.login.toString().toLowerCase().indexOf(searchTerms.login) !== -1
-        && data.userRole.indexOf(searchTerms.userRole) !== -1
-        && data.firstname.indexOf(searchTerms.firstname) !== -1
-        && data.lastname.indexOf(searchTerms.lastname) !== -1
-        && data.email.indexOf(searchTerms.email) !== -1
+        && data.userRole.toString().toLowerCase().indexOf(searchTerms.userRole) !== -1
+        && data.firstname.toString().toLowerCase().indexOf(searchTerms.firstname) !== -1
+        && data.lastname.toString().toLowerCase().indexOf(searchTerms.lastname) !== -1
+        && data.email.toString().toLowerCase().indexOf(searchTerms.email) !== -1
         && data.phoneNumber.toString().toLowerCase().indexOf(searchTerms.phoneNumber) !== -1
         && data.points.toString().toLowerCase().indexOf(searchTerms.points) !== -1;
     };

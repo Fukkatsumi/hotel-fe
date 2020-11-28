@@ -1,100 +1,95 @@
 <div class="table-component">
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <div *ngIf="!isEmptyTable" style="margin-left: 400px ">
+    <app-loading-animation></app-loading-animation>
+  </div>
+  <div *ngIf="isEmptyTable">
+    <table mat-table [dataSource]="apartmentsList">
 
-  <table mat-table [dataSource]="apartmentsList">
+      <ng-container matColumnDef="roomNumber">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Room number</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="roomNumberFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.roomNumber}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="roomNumber">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Room number</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="roomNumberFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.roomNumber}} </td>
-    </ng-container>
+      <ng-container matColumnDef="photo">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Photo url</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="photoFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.photo}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="photo">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Photo url</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="photoFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.photo}} </td>
-    </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Description</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="descriptionFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.description}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Description</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="descriptionFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.description}} </td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Status</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="statusFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.status}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Status</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="statusFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.status}} </td>
-    </ng-container>
 
-    <ng-container matColumnDef="apartmentClass.id">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Class id</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="classIdFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.id}} </td>
-    </ng-container>
+      <ng-container matColumnDef="apartmentClass.nameClass">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Class name</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="nameClassFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.nameClass}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="apartmentClass.nameClass">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Class name</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="nameClassFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.nameClass}} </td>
-    </ng-container>
+      <ng-container matColumnDef="apartmentClass.numberOfRooms">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Number of rooms</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="numberOfRoomsFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.numberOfRooms}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="apartmentClass.numberOfRooms">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Number of rooms</p>
-      <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="numberOfRoomsFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.numberOfRooms}} </td>
-    </ng-container>
+      <ng-container matColumnDef="apartmentClass.numberOfCouchette">
+        <th mat-header-cell *matHeaderCellDef>
+          <p>Number of couchette</p>
+          <mat-form-field class="filter" floatLabel="never">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="numberOfCouchetteFilter">
+          </mat-form-field>
+        </th>
+        <td mat-cell
+            *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.numberOfCouchette}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="apartmentClass.numberOfCouchette">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>Number of couchette</p>
-        <mat-form-field class="filter" floatLabel="never">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="numberOfCouchetteFilter">
-        </mat-form-field>
-      </th>
-      <td mat-cell *matCellDef="let selectedApartments"> {{selectedApartments?.apartmentClass.numberOfCouchette}} </td>
-    </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="selectRow(row)"
+          [ngClass]="{'highlightRow': selectedRow == row.id}"></tr>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="selectRow(row)"
-        [ngClass]="{'highlightRow': selectedRow == row.roomNumber}"></tr>
-
-  </table>
+    </table>
+  </div>
 </div>
